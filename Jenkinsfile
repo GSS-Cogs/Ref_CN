@@ -15,4 +15,9 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      archiveArtifacts 'CN_2015_20180206_105537.ttl'
+    }
+  }
 }
