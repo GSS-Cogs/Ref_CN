@@ -41,8 +41,6 @@
       <skos:Concept rdf:ID="section_{Label[1]/LabelText/text()}">
         <skos:inScheme rdf:resource="#{/Claset/Classification/@id}"/>
         <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
-        <rdfs:label xml:lang="fr"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[2]/PropertyText"/></rdfs:label>
-        <rdfs:label xml:lang="de"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[3]/PropertyText"/></rdfs:label>
         <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#Section"><xsl:value-of select="Label[1]/LabelText/text()"/></skos:notation>
       </skos:Concept>
     </xsl:template>
@@ -53,8 +51,6 @@
         <xsl:choose>
           <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
             <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
-            <rdfs:label xml:lang="fr"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[2]/PropertyText"/></rdfs:label>
-            <rdfs:label xml:lang="de"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[3]/PropertyText"/></rdfs:label>
           </xsl:when>
           <xsl:otherwise>
             <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
