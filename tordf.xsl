@@ -29,7 +29,7 @@
         </rdfs:Datatype>
 
         <skos:ConceptScheme rdf:ID="{@id}">
-          <skos:prefLabel><xsl:value-of select="Label/LabelText"/></skos:prefLabel>
+          <rdfs:label><xsl:value-of select="Label/LabelText"/></rdfs:label>
           <rdfs:comment><xsl:value-of select="Property[@name='Comment']/PropertyQualifier/PropertyText"/></rdfs:comment>
           <!-- <xkos:numberOfLevels><xsl:value-of select="max(//node()[not(node())]/count(ancestor-or-self::node()))"/></xkos:numberOfLevels> -->
         </skos:ConceptScheme>
@@ -40,9 +40,9 @@
     <xsl:template match="Item[@idLevel='1']"> <!-- sections -->
       <skos:Concept rdf:ID="section_{Label[1]/LabelText/text()}">
         <skos:inScheme rdf:resource="#{/Claset/Classification/@id}"/>
-        <skos:prefLabel xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></skos:prefLabel>
-        <skos:prefLabel xml:lang="fr"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[2]/PropertyText"/></skos:prefLabel>
-        <skos:prefLabel xml:lang="de"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[3]/PropertyText"/></skos:prefLabel>
+        <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
+        <rdfs:label xml:lang="fr"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[2]/PropertyText"/></rdfs:label>
+        <rdfs:label xml:lang="de"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[3]/PropertyText"/></rdfs:label>
         <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#Section"><xsl:value-of select="Label[1]/LabelText/text()"/></skos:notation>
       </skos:Concept>
     </xsl:template>
@@ -52,12 +52,12 @@
         <skos:inScheme rdf:resource="#{/Claset/Classification/@id}"/>
         <xsl:choose>
           <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
-            <skos:prefLabel xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></skos:prefLabel>
-            <skos:prefLabel xml:lang="fr"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[2]/PropertyText"/></skos:prefLabel>
-            <skos:prefLabel xml:lang="de"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[3]/PropertyText"/></skos:prefLabel>
+            <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
+            <rdfs:label xml:lang="fr"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[2]/PropertyText"/></rdfs:label>
+            <rdfs:label xml:lang="de"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[3]/PropertyText"/></rdfs:label>
           </xsl:when>
           <xsl:otherwise>
-            <skos:prefLabel xml:lang="en"><xsl:value-of select="Label/LabelText"/></skos:prefLabel>
+            <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
           </xsl:otherwise>
         </xsl:choose>
         <xkos:specializes rdf:resource="#section_{preceding-sibling::Item[@idLevel='1'][1]/Label[1]/LabelText/text()}"/>
