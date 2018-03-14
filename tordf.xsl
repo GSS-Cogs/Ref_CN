@@ -61,6 +61,22 @@
       </skos:Concept>
     </xsl:template>
 
-    <xsl:template match="Item"/>
+    <xsl:template match="Item">
+      <xsl:variable name="code" select="translate(Label[@qualifier='Usual']/LabelText[@language='ALL']/text(), ' ', '')"/>
+      <xsl:choose>
+        <xsl:when test="(string-length($code) = 8) and (translate($code, '0123456789', '') = '')">
+          <skos:Concept rdf:ID="cn8_{$code}">
+            <xsl:choose>
+              <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
+                <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
+              </xsl:when>
+              <xsl:otherwise>
+                <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
+              </xsl:otherwise>
+            </xsl:choose>
+          </skos:Concept>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:template>
 
 </xsl:stylesheet>
