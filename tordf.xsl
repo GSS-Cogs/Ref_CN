@@ -27,6 +27,13 @@
             <rdf:Description><xsd:pattern>[0-9]{2}</xsd:pattern></rdf:Description>
           </owl:withRestrictions>
         </rdfs:Datatype>
+        <rdfs:Datatype rdf:ID="CN">
+          <rdfs:comment>CN subheading (8 digits)</rdfs:comment>
+          <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
+          <owl:withRestrictions rdf:parseType="Collection">
+            <rdf:Description><xsd:pattern>[0-9]{4} [0-9]{2} [0-9]{2}</xsd:pattern></rdf:Description>
+          </owl:withRestrictions>
+        </rdfs:Datatype>
 
         <skos:ConceptScheme rdf:ID="{@id}">
           <rdfs:label><xsl:value-of select="Label/LabelText"/></rdfs:label>
@@ -62,10 +69,12 @@
     </xsl:template>
 
     <xsl:template match="Item">
-      <xsl:variable name="code" select="translate(Label[@qualifier='Usual']/LabelText[@language='ALL']/text(), ' ', '')"/>
+      <xsl:variable name="codeLabel" select="Label[@qualifier='Usual']/LabelText[@language='ALL']/text()"/>
+      <xsl:variable name="code" select="translate($codeLabel, ' ', '')"/>
       <xsl:choose>
         <xsl:when test="(string-length($code) = 8) and (translate($code, '0123456789', '') = '')">
           <skos:Concept rdf:ID="cn8_{$code}">
+            <skos:inScheme rdf:resource="#{/Claset/Classification/@id}"/>
             <xsl:choose>
               <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
                 <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
@@ -74,6 +83,7 @@
                 <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
               </xsl:otherwise>
             </xsl:choose>
+            <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#CN"><xsl:value-of select="$codeLabel"/></skos:notation>
           </skos:Concept>
         </xsl:when>
       </xsl:choose>
