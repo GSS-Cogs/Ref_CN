@@ -1,8 +1,10 @@
-CN_2015_20180206_105537.xml:
-	curl -s -z CN_2015_20180206_105537.xml -o CN_2015_20180206_105537.xml 'http://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=ACT_OTH_CLS_DLD&StrNom=CN_2015&StrFormat=XML&StrLanguageCode=EN'
+all: CN_2012.ttl CN_2013.ttl CN_2014.ttl CN_2015.ttl CN_2016.ttl
 
-%.rdf: %.xml
+CN_%.xml:
+	curl --compressed --silent --time-cond $@ --output $@ "http://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm?TargetUrl=ACT_OTH_CLS_DLD&StrNom=$(basename $@)&StrFormat=XML&StrLanguageCode=EN"
+
+CN_%.rdf: CN_%.xml
 	xsltproc --novalid -o $@  tordf.xsl $<
 
-%.ttl: %.rdf
+CN_%.ttl: CN_%.rdf
 	rapper -i rdfxml -o turtle $< > $@
