@@ -12,7 +12,7 @@
     <xsl:output method="xml" indent="yes"/>
 
     <xsl:template match="/Claset/Classification">
-      <rdf:RDF xml:base="https://trade.ec.europa.eu/def/cn">
+      <rdf:RDF xml:base="https://trade.ec.europa.eu/def/{translate(@id, 'CN', 'cn')}">
         <rdfs:Datatype rdf:ID="Section">
           <rdfs:comment>Section code</rdfs:comment>
           <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
@@ -35,7 +35,7 @@
           </owl:withRestrictions>
         </rdfs:Datatype>
 
-        <skos:ConceptScheme rdf:ID="{@id}">
+        <skos:ConceptScheme rdf:about="">
           <rdfs:label><xsl:value-of select="Label/LabelText"/></rdfs:label>
           <rdfs:comment><xsl:value-of select="Property[@name='Comment']/PropertyQualifier/PropertyText"/></rdfs:comment>
           <!-- <xkos:numberOfLevels><xsl:value-of select="max(//node()[not(node())]/count(ancestor-or-self::node()))"/></xkos:numberOfLevels> -->
@@ -46,7 +46,7 @@
 
     <xsl:template match="Item[@idLevel='1']"> <!-- sections -->
       <skos:Concept rdf:ID="section_{Label[1]/LabelText/text()}">
-        <skos:inScheme rdf:resource="#{/Claset/Classification/@id}"/>
+        <skos:inScheme rdf:resource=""/>
         <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
         <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#Section"><xsl:value-of select="Label[1]/LabelText/text()"/></skos:notation>
       </skos:Concept>
@@ -54,7 +54,7 @@
 
     <xsl:template match="Item[@idLevel='2']"> <!-- chapters -->
       <skos:Concept rdf:ID="chapter_{Label[1]/LabelText/text()}">
-        <skos:inScheme rdf:resource="#{/Claset/Classification/@id}"/>
+        <skos:inScheme rdf:resource=""/>
         <xsl:choose>
           <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
             <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
@@ -74,7 +74,7 @@
       <xsl:choose>
         <xsl:when test="(string-length($code) = 8) and (translate($code, '0123456789', '') = '')">
           <skos:Concept rdf:ID="cn8_{$code}">
-            <skos:inScheme rdf:resource="#{/Claset/Classification/@id}"/>
+            <skos:inScheme rdf:resource=""/>
             <xsl:choose>
               <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
                 <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
