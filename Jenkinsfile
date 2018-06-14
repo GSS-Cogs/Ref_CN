@@ -30,8 +30,8 @@ pipeline {
                         String graph = "https://trade.ec.europa.eu/def/cn"
                         drafter.deleteGraph(PMD, credentials, newJobDraft.id, graph)
                         drafter.addData(PMD, credentials, newJobDraft.id,
-                                        readFile(file: "CN_2015_20180206_105537.ttl", encoding:'UTF-8'),
-                                        'text/turtle; charset="UTF-8"', graph)
+                                        readFile(file: "CN_2015_20180206_105537.ttl"),
+                                        'text/turtle', graph)
                         drafter.publishDraftset(PMD, credentials, newJobDraft.id)
                     }
                 }
