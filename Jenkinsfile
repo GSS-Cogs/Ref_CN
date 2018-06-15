@@ -3,18 +3,7 @@ pipeline {
         label 'master'
     }
     stages {
-        stage('Transform') {
-            agent {
-                dockerfile {
-                    args "-v ${env.WORKSPACE}:/workspace"
-                    reuseNode true
-                }
-            }
-            steps {
-                sh 'make CN_2015_20180206_105537.ttl'
-            }
-        }
-        stage('Publish results') {
+        stage('Test uploading UTF-8') {
             steps {
                 script {
                     configFileProvider([configFile(fileId: 'pmd', variable: 'configfile')]) {
@@ -27,20 +16,15 @@ pipeline {
                             drafter.deleteDraftset(PMD, credentials, jobDraft.id)
                         }
                         def newJobDraft = drafter.createDraftset(PMD, credentials, env.JOB_NAME)
-                        String graph = "https://trade.ec.europa.eu/def/cn"
+                        String graph = "http://foo.bar.com/"
                         drafter.deleteGraph(PMD, credentials, newJobDraft.id, graph)
                         drafter.addData(PMD, credentials, newJobDraft.id,
-                                        readFile(file: "CN_2015_20180206_105537.ttl"),
-                                        'text/turtle', graph)
+                                        readFile(file: "cubed.ttl"),
+                                        'text/turtle; text/turtle; charset="UTF-8"', graph)
                         drafter.publishDraftset(PMD, credentials, newJobDraft.id)
                     }
                 }
             }
-        }
-    }
-    post {
-        always {
-            archiveArtifacts 'CN_2015_20180206_105537.ttl'
         }
     }
 }

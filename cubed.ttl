@@ -1,0 +1,14 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xkos: <http://rdf-vocabulary.ddialliance.org/xkos#> .
+@prefix ec: <https://trade.ec.europa.eu/def/cn#> .
+
+ec:cn8_87032110
+    a skos:Concept ;
+    rdfs:label "Motor cars and other motor vehicles principally designed for the transport of persons, incl. station wagons and racing cars, with spark-ignition internal combustion reciprocating piston engine of a cylinder capacity <= 1.000 cm³, new (excl. vehicles for the transport of persons on snow and other specially designed vehicles of subheading 8703.10)"@en ;
+    skos:inScheme ec:CN_2015 ;
+    skos:notation "8703 21 10"^^ec:CN .
