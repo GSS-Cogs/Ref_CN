@@ -11,7 +11,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'make CN_2015_20180206_105537.ttl'
+                sh 'make'
             }
         }
         stage('Publish results') {
@@ -27,11 +27,13 @@ pipeline {
                             drafter.deleteDraftset(PMD, credentials, jobDraft.id)
                         }
                         def newJobDraft = drafter.createDraftset(PMD, credentials, env.JOB_NAME)
-                        String graph = "https://trade.ec.europa.eu/def/cn"
-                        drafter.deleteGraph(PMD, credentials, newJobDraft.id, graph)
-                        drafter.addData(PMD, credentials, newJobDraft.id,
-                                        readFile(file: "CN_2015_20180206_105537.ttl", encoding: 'UTF-8'),
-                                        'text/turtle;charset=UTF-8', graph)
+                        for (int y = 2012; y <2016; y++) {
+                            String graph = "https://trade.ec.europa.eu/def/cn_${y}"
+                            drafter.deleteGraph(PMD, credentials, newJobDraft.id, graph)
+                            drafter.addData(PMD, credentials, newJobDraft.id,
+                                            readFile(file: "CN_${y}.ttl", encoding: 'UTF-8'),
+                                            'text/turtle;charset=UTF-8', graph)
+                        }
                         drafter.publishDraftset(PMD, credentials, newJobDraft.id)
                     }
                 }
@@ -40,7 +42,7 @@ pipeline {
     }
     post {
         always {
-            archiveArtifacts 'CN_2015_20180206_105537.ttl'
+            archiveArtifacts '*.ttl'
         }
     }
 }
