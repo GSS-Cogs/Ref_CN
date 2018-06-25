@@ -27,7 +27,7 @@ pipeline {
                             drafter.deleteDraftset(PMD, credentials, jobDraft.id)
                         }
                         def newJobDraft = drafter.createDraftset(PMD, credentials, env.JOB_NAME)
-                        for (int y = 2012; y <2016; y++) {
+                        for (int y = 2012; y <= 2016; y++) {
                             String graph = "https://trade.ec.europa.eu/def/cn_${y}"
                             drafter.deleteGraph(PMD, credentials, newJobDraft.id, graph)
                             drafter.addData(PMD, credentials, newJobDraft.id,
