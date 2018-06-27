@@ -13,21 +13,35 @@
 
     <xsl:template match="/Claset/Classification">
       <rdf:RDF xml:base="https://trade.ec.europa.eu/def/{translate(@id, 'CN', 'cn')}">
-        <rdfs:Datatype rdf:ID="Section">
+        <rdfs:Datatype rdf:about="https://trade.ec.europa.eu/def/cn#Section">
           <rdfs:comment>Section code</rdfs:comment>
           <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
           <owl:withRestrictions rdf:parseType="Collection">
             <rdf:Description><xsd:pattern>[MDCLXVI]+</xsd:pattern></rdf:Description>
           </owl:withRestrictions>
         </rdfs:Datatype>
-        <rdfs:Datatype rdf:ID="Chapter">
-          <rdfs:comment>Chapter code</rdfs:comment>
+        <rdfs:Datatype rdf:about="https://trade.ec.europa.eu/def/cn#HS2">
+          <rdfs:comment>Chapter in the Harmonised System</rdfs:comment>
           <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
           <owl:withRestrictions rdf:parseType="Collection">
             <rdf:Description><xsd:pattern>[0-9]{2}</xsd:pattern></rdf:Description>
           </owl:withRestrictions>
         </rdfs:Datatype>
-        <rdfs:Datatype rdf:ID="CN">
+        <rdfs:Datatype rdf:about="https://trade.ec.europa.eu/def/cn#HS4">
+          <rdfs:comment>Harmonised System heading</rdfs:comment>
+          <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
+          <owl:withRestrictions rdf:parseType="Collection">
+            <rdf:Description><xsd:pattern>[0-9]{4}</xsd:pattern></rdf:Description>
+          </owl:withRestrictions>
+        </rdfs:Datatype>
+        <rdfs:Datatype rdf:about="https://trade.ec.europa.eu/def/cn#HS6">
+          <rdfs:comment>Harmonised System subheading</rdfs:comment>
+          <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
+          <owl:withRestrictions rdf:parseType="Collection">
+            <rdf:Description><xsd:pattern>[0-9]{4} [0-9]{2}</xsd:pattern></rdf:Description>
+          </owl:withRestrictions>
+        </rdfs:Datatype>
+        <rdfs:Datatype rdf:about="https://trade.ec.europa.eu/def/cn#CN8">
           <rdfs:comment>CN subheading (8 digits)</rdfs:comment>
           <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#String"/>
           <owl:withRestrictions rdf:parseType="Collection">
@@ -53,7 +67,7 @@
     </xsl:template>
 
     <xsl:template match="Item[@idLevel='2']"> <!-- chapters -->
-      <skos:Concept rdf:ID="chapter_{Label[1]/LabelText/text()}">
+      <skos:Concept rdf:ID="hs2_{Label[1]/LabelText/text()}">
         <skos:inScheme rdf:resource=""/>
         <xsl:choose>
           <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
@@ -64,9 +78,26 @@
           </xsl:otherwise>
         </xsl:choose>
         <xkos:specializes rdf:resource="#section_{preceding-sibling::Item[@idLevel='1'][1]/Label[1]/LabelText/text()}"/>
-        <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#Chapter"><xsl:value-of select="Label[1]/LabelText/text()"/></skos:notation>
+        <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#HS2"><xsl:value-of select="Label[1]/LabelText/text()"/></skos:notation>
       </skos:Concept>
     </xsl:template>
+
+    <xsl:template match="Item[@idLevel='3']"> <!-- chapters -->
+      <skos:Concept rdf:ID="hs2_{Label[1]/LabelText/text()}">
+        <skos:inScheme rdf:resource=""/>
+        <xsl:choose>
+          <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
+            <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
+          </xsl:when>
+          <xsl:otherwise>
+            <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
+          </xsl:otherwise>
+        </xsl:choose>
+        <xkos:specializes rdf:resource="#section_{preceding-sibling::Item[@idLevel='1'][1]/Label[1]/LabelText/text()}"/>
+        <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#HS2"><xsl:value-of select="Label[1]/LabelText/text()"/></skos:notation>
+      </skos:Concept>
+    </xsl:template>
+
 
     <xsl:template match="Item">
       <xsl:variable name="codeLabel" select="Label[@qualifier='Usual']/LabelText[@language='ALL']/text()"/>
@@ -83,7 +114,45 @@
                 <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
               </xsl:otherwise>
             </xsl:choose>
-            <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#CN"><xsl:value-of select="$codeLabel"/></skos:notation>
+            <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#CN8"><xsl:value-of select="$codeLabel"/></skos:notation>
+            <xsl:choose>
+              <xsl:when test="'00' = substring($code, 7)">
+                <skos:specializes rdf:resource="#hs4_{substring($code, 1, 4)}"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <skos:specializes rdf:resource="#hs6_{substring($code, 1, 6)}"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </skos:Concept>
+        </xsl:when>
+        <xsl:when test="(string-length($code) = 6) and (translate($code, '0123456789', '') = '')">
+          <skos:Concept rdf:ID="hs6_{$code}">
+            <skos:inScheme rdf:resource=""/>
+            <xsl:choose>
+              <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
+                <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
+              </xsl:when>
+              <xsl:otherwise>
+                <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
+              </xsl:otherwise>
+            </xsl:choose>
+            <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#HS6"><xsl:value-of select="$codeLabel"/></skos:notation>
+            <skos:specializes rdf:resource="#hs4_{substring($code, 1, 4)}"/>
+          </skos:Concept>
+        </xsl:when>
+        <xsl:when test="(string-length($code) = 4) and (translate($code, '0123456789', '') = '')">
+          <skos:Concept rdf:ID="hs4_{$code}">
+            <skos:inScheme rdf:resource=""/>
+            <xsl:choose>
+              <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
+                <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
+              </xsl:when>
+              <xsl:otherwise>
+                <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
+              </xsl:otherwise>
+            </xsl:choose>
+            <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#HS6"><xsl:value-of select="$codeLabel"/></skos:notation>
+            <skos:specializes rdf:resource="#hs2_{substring($code, 1, 2)}"/>
           </skos:Concept>
         </xsl:when>
       </xsl:choose>
