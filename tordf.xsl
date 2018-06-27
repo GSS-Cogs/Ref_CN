@@ -82,23 +82,6 @@
       </skos:Concept>
     </xsl:template>
 
-    <xsl:template match="Item[@idLevel='3']"> <!-- chapters -->
-      <skos:Concept rdf:ID="hs2_{Label[1]/LabelText/text()}">
-        <skos:inScheme rdf:resource=""/>
-        <xsl:choose>
-          <xsl:when test="count(Property[@name='ExplanatoryNote']/PropertyQualifier) = 3">
-            <rdfs:label xml:lang="en"><xsl:value-of select="Property[@name='ExplanatoryNote']/PropertyQualifier[1]/PropertyText"/></rdfs:label>
-          </xsl:when>
-          <xsl:otherwise>
-            <rdfs:label xml:lang="en"><xsl:value-of select="Label/LabelText"/></rdfs:label>
-          </xsl:otherwise>
-        </xsl:choose>
-        <xkos:specializes rdf:resource="#section_{preceding-sibling::Item[@idLevel='1'][1]/Label[1]/LabelText/text()}"/>
-        <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#HS2"><xsl:value-of select="Label[1]/LabelText/text()"/></skos:notation>
-      </skos:Concept>
-    </xsl:template>
-
-
     <xsl:template match="Item">
       <xsl:variable name="codeLabel" select="Label[@qualifier='Usual']/LabelText[@language='ALL']/text()"/>
       <xsl:variable name="code" select="translate($codeLabel, ' ', '')"/>
