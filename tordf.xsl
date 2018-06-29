@@ -66,10 +66,16 @@
         <rdfs:comment>
           <xsl:value-of select="Property[@name='Comment']/PropertyQualifier/PropertyText"/>
         </rdfs:comment>
-        <!-- <xkos:numberOfLevels><xsl:value-of select="max(//node()[not(node())]/count(ancestor-or-self::node()))"/></xkos:numberOfLevels> -->
+        <xsl:apply-templates select="Item[@idLevel='1']" mode="hasTopConcept"/>
       </skos:ConceptScheme>
       <xsl:apply-templates select="Item"/>
     </rdf:RDF>
+  </xsl:template>
+
+  <xsl:template match="Item" mode="hasTopConcept">
+    <xsl:variable name="codeLabel" select="Label[@qualifier='Usual']/LabelText[@language='ALL']/text()"/>
+    <xsl:variable name="code" select="translate($codeLabel, ' ', '')"/>
+    <skos:hasTopConcept rdf:resource="#section_{$code}"/>
   </xsl:template>
 
   <xsl:template match="Item">
@@ -151,12 +157,17 @@
     <xsl:param name="notation" />
     <xsl:param name="notationType" />
     <skos:Concept rdf:ID="{$ID}">
-      <rdfs:label><xsl:value-of select="$label"/></rdfs:label>
+      <rdfs:label xml:lang="en"><xsl:value-of select="$label"/></rdfs:label>
       <skos:inScheme rdf:resource=""/>
       <skos:notation rdf:datatype="https://trade.ec.europa.eu/def/cn#{$notationType}"><xsl:value-of select="$notation"/></skos:notation>
-      <xsl:if test="$parent != ''">
-        <skos:specializes rdf:resource="{$parent}"/>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="$parent != ''">
+          <skos:broader rdf:resource="{$parent}"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <skos:topConceptOf rdf:resource=""/>
+        </xsl:otherwise>
+      </xsl:choose>
     </skos:Concept>
   </xsl:template>
 
