@@ -14,6 +14,11 @@ pipeline {
                 sh 'make'
             }
         }
+        stage('Test') {
+            steps {
+                sh 'make test'
+            }
+        }
         stage('Publish results') {
             steps {
                 script {
