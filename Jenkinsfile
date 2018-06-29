@@ -3,6 +3,11 @@ pipeline {
         label 'master'
     }
     stages {
+        stage('Clean') {
+            steps {
+                sh 'make clean'
+            }
+        }
         stage('Transform') {
             agent {
                 dockerfile {

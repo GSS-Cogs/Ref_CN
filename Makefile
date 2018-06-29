@@ -11,5 +11,8 @@ CN_%.ttl: CN_%.rdf
 
 .PRECIOUS: CN_%.xml
 
+clean:
+	rm *.ttl
+
 test:
 	java -cp lib/sparql-1.3.jar uk.org.floop.sparqlTestRunner.Run CN_*.ttl
